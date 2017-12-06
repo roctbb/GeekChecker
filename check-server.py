@@ -12,8 +12,8 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self):
         try:
             code = self.get_argument('code')
-            checker = self.get_argument('checker')
-            data = self.get_argument('input')
+            checker = self.get_argument('checker', None)
+            data = self.get_argument('input', None)
             pswd = self.get_argument('pswd', None)
 
             if pswd != "pswd":
@@ -25,11 +25,13 @@ class MainHandler(tornado.web.RequestHandler):
             with open(filename, 'w') as tfile:
                 tfile.write(code)
                 tfile.write('\n')
-                tfile.write(checker)
-                tfile.write('\n')
+                if checker != None:
+                    tfile.write(checker)
+                    tfile.write('\n')
             process = subprocess.Popen(['python3', filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
-            process.stdin.write(data.encode('utf-8'))
+            if data != None:
+                process.stdin.write(data.encode('utf-8'))
             process.stdin.close()
             process.wait(timeout=3)
             errors = process.stderr.read().decode('utf-8')
