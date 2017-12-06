@@ -13,6 +13,12 @@ class MainHandler(tornado.web.RequestHandler):
         try:
             code = self.get_argument('code')
             checker = self.get_argument('code')
+            pswd = self.get_argument('pswd', None)
+
+            if pswd != "pswd":
+                res = {"state": "general error", "error": "AUTH"}
+                self.write(res)
+                return
 
             filename = "code/" + str(uuid.uuid4()) + ".py"
             with open(filename, 'w') as tfile:
